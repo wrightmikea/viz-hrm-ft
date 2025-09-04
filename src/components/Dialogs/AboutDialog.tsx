@@ -66,7 +66,7 @@ const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
                 MIT License - Free to use, modify, and distribute
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Copyright © 2025 Mike Wright
+                Copyright © 2025 Michael A. Wright
               </p>
             </div>
             

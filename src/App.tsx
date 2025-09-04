@@ -146,8 +146,8 @@ function App() {
     return `📚 Tutorial Step ${tutorialStep} of ${tutorialSteps.length - 1}`;
   };
 
-  // Special layout for training phase
-  if (showTrainingAnimation && tutorialStep === 4) {
+  // Special layout for training phase (only during tutorial step 4)
+  if (showTrainingAnimation && showTutorial && tutorialStep === 4) {
     return (
       <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
         {/* Header */}
@@ -254,7 +254,7 @@ function App() {
         <footer className="bg-gray-800 text-white px-4 py-2 text-xs flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
-              © 2025 Mike Wright | MIT License
+              © 2025 Michael A. Wright | MIT License
             </div>
             <button
               onClick={() => setShowChangeHistoryDialog(true)}
@@ -285,12 +285,12 @@ function App() {
   // Normal layout for other phases
   return (
     <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
-      {/* Header - Minimal */}
-      <header className="bg-white shadow-sm px-4 py-2 flex-shrink-0">
+      {/* Header - Compact */}
+      <header className="bg-white shadow-sm px-4 py-1 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold">HRM Training Visualization</h1>
-            <p className="text-xs text-gray-600">{getModeLabel()}</p>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-base font-bold">HRM Training Visualization</h1>
+            <span className="text-xs text-gray-600">{getModeLabel()}</span>
           </div>
           <div className="flex items-center space-x-3">
             <button
@@ -330,20 +330,20 @@ function App() {
         />
       )}
 
-      {/* Main Content - Compact Layout */}
-      <div className="flex-1 overflow-hidden p-2">
-        <div className="h-full flex flex-col space-y-2">
+      {/* Main Content - Very Compact Layout */}
+      <div className="flex-1 overflow-hidden p-1">
+        <div className="h-full flex flex-col space-y-1">
           {/* World and Status */}
           <div className={`${currentTutorial.highlight?.includes('world') ? 'ring-4 ring-blue-400 rounded-lg' : ''}`}>
             <WideWorld />
           </div>
 
           {/* Two Column Layout */}
-          <div className="flex-1 grid grid-cols-2 gap-2 min-h-0">
+          <div className="flex-1 grid grid-cols-2 gap-1 min-h-0">
             {/* Left: Model Status */}
-            <div className="flex flex-col space-y-2 overflow-auto">
+            <div className="flex flex-col space-y-1 overflow-auto">
               {/* Model Status */}
-              <div className="bg-white rounded-lg shadow p-2">
+              <div className="bg-white rounded-lg shadow p-1">
                 <h3 className="text-sm font-bold mb-2">AI Model Status</h3>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -438,13 +438,13 @@ function App() {
                     </button>
                     <button
                       onClick={() => {
-                        const episode = generateEpisode(modelAccuracy.planner > 50);
+                        const episode = generateEpisode(false);
                         runEpisode(episode);
                       }}
-                      className="flex-1 px-1 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                      title="Step 2 & 5: Test the AI"
+                      className="flex-1 px-1 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                      title="Step 2: Test untrained AI"
                     >
-                      2/5. Test
+                      2. Pre
                     </button>
                     <button
                       onClick={generateTrainingData}
@@ -455,13 +455,22 @@ function App() {
                     </button>
                     <button
                       onClick={() => {
-                        setShowTrainingAnimation(true);
-                        setPhase('training');
+                        trainModel(5);
                       }}
                       className="flex-1 px-1 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
                       title="Step 4: Train the model"
                     >
                       4. Train
+                    </button>
+                    <button
+                      onClick={() => {
+                        const episode = generateEpisode(true);
+                        runEpisode(episode);
+                      }}
+                      className="flex-1 px-1 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                      title="Step 5: Test trained AI"
+                    >
+                      5. Post
                     </button>
                   </div>
                 </div>
@@ -472,10 +481,10 @@ function App() {
       </div>
       
       {/* Footer */}
-      <footer className="bg-gray-800 text-white px-4 py-2 text-xs flex-shrink-0">
+      <footer className="bg-gray-800 text-white px-4 py-1 text-xs flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            © 2025 Mike Wright | MIT License
+            © 2025 Michael A. Wright | MIT License
           </div>
           <button
             onClick={() => setShowChangeHistoryDialog(true)}
