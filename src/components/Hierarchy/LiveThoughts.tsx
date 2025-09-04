@@ -73,7 +73,7 @@ const LiveThoughts: React.FC = () => {
             exit={{ opacity: 0, x: -20 }}
             className="flex items-start space-x-2"
           >
-            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm">
+            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm" title="Planner - High-level decision maker that sets goals">
               🧠
             </div>
             <div className="bg-blue-100 rounded-lg px-3 py-2 relative">
@@ -100,7 +100,7 @@ const LiveThoughts: React.FC = () => {
             exit={{ opacity: 0, x: -20 }}
             className="flex items-start space-x-2"
           >
-            <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm">
+            <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm" title="Doer - Low-level executor that performs actions">
               🤖
             </div>
             <div className="bg-green-100 rounded-lg px-3 py-2 relative">
@@ -124,6 +124,7 @@ const LiveThoughts: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="bg-purple-100 rounded-lg p-2 text-center"
+          title="AI is learning from the training examples"
         >
           <p className="text-xs font-medium text-purple-900">
             📚 Learning from examples: "Key first, then door!"

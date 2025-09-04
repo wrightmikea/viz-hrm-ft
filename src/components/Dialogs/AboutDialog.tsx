@@ -6,7 +6,7 @@ interface AboutDialogProps {
   onClose: () => void;
 }
 
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '0.1.0-beta';
 
 const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;

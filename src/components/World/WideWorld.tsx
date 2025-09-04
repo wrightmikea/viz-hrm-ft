@@ -18,6 +18,7 @@ const WideWorld: React.FC = () => {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 300 }}
+          title="Agent - The AI character learning to solve the puzzle"
         >
           🧍
         </motion.div>
@@ -38,6 +39,7 @@ const WideWorld: React.FC = () => {
             repeat: Infinity,
             ease: "easeInOut"
           }}
+          title="Key - Must be picked up before opening the door"
         >
           🔑
         </motion.div>
@@ -53,6 +55,7 @@ const WideWorld: React.FC = () => {
             rotate: currentState.doorOpen ? 25 : 0
           }}
           transition={{ type: "spring", stiffness: 100 }}
+          title={currentState.doorOpen ? "Door - Opened! Task complete!" : "Door - Can only be opened with the key"}
         >
           🚪
         </motion.div>

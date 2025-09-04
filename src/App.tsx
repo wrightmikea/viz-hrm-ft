@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import BeginnerWizard, { TutorialStep } from './components/Tutorial/BeginnerWizard';
-import WideWorld from './components/World/WideWorld';
-import LiveThoughts from './components/Hierarchy/LiveThoughts';
-import TrainingDataPanel from './components/Training/TrainingDataPanel';
+import CompactLayout from './components/UI/CompactLayout';
 import AnimatedTraining from './components/Training/AnimatedTraining';
 import AboutDialog from './components/Dialogs/AboutDialog';
 import ReferencesDialog from './components/Dialogs/ReferencesDialog';
@@ -21,7 +19,6 @@ function App() {
     resetModel,
     setPhase,
     modelAccuracy,
-    currentState,
     pause
   } = useSimulationStore();
 
@@ -320,165 +317,18 @@ function App() {
         </div>
       </header>
 
-      {/* Tutorial Wizard */}
-      {showTutorial && (
-        <BeginnerWizard
-          step={currentTutorial}
-          totalSteps={tutorialSteps.length}
-          onPrevious={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
-          onSkip={() => setShowTutorial(false)}
-        />
-      )}
-
-      {/* Main Content - Very Compact Layout */}
-      <div className="flex-1 overflow-hidden p-1">
-        <div className="h-full flex flex-col space-y-1">
-          {/* World and Status */}
-          <div className={`${currentTutorial.highlight?.includes('world') ? 'ring-4 ring-blue-400 rounded-lg' : ''}`}>
-            <WideWorld />
-          </div>
-
-          {/* Two Column Layout */}
-          <div className="flex-1 grid grid-cols-2 gap-1 min-h-0">
-            {/* Left: Model Status */}
-            <div className="flex flex-col space-y-1 overflow-auto">
-              {/* Model Status */}
-              <div className="bg-white rounded-lg shadow p-1">
-                <h3 className="text-sm font-bold mb-2">AI Model Status</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs">🧠 Planner (decides goals):</span>
-                    <div className="flex items-center space-x-1">
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
-                        <motion.div
-                          className="bg-blue-500 h-2 rounded-full"
-                          animate={{ width: `${modelAccuracy.planner}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono">{Math.round(modelAccuracy.planner)}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs">🤖 Doer (executes actions):</span>
-                    <div className="flex items-center space-x-1">
-                      <div className="w-20 bg-gray-200 rounded-full h-2">
-                        <motion.div
-                          className="bg-green-500 h-2 rounded-full"
-                          animate={{ width: `${modelAccuracy.doer}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono">{Math.round(modelAccuracy.doer)}%</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span>💾 Memory:</span>
-                    <span className="font-mono">{currentState.hasKey ? 'has_key=true' : 'has_key=false'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Training Data - show when we have training episodes */}
-              {(tutorialStep >= 3 || !showTutorial) && (
-                <div className={`${currentTutorial.highlight?.includes('data') ? 'ring-4 ring-blue-400 rounded-lg' : ''}`}>
-                  <TrainingDataPanel />
-                </div>
-              )}
-            </div>
-
-            {/* Right: AI Thoughts & Controls */}
-            <div className="flex flex-col space-y-2 overflow-auto">
-              {/* Live Thoughts */}
-              <div className={`bg-white rounded-lg shadow p-2 ${
-                currentTutorial.highlight?.includes('thoughts') ? 'ring-4 ring-blue-400' : ''
-              }`}>
-                <h3 className="text-sm font-bold mb-2">AI Thinking Process</h3>
-                <LiveThoughts />
-              </div>
-
-              {/* Controls */}
-              {!showTutorial && (
-                <div className="bg-white rounded-lg shadow p-2">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-bold">Controls</h3>
-                    <button
-                      onClick={() => setShowHelp(!showHelp)}
-                      className="px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    >
-                      {showHelp ? 'Hide Help' : 'Help'}
-                    </button>
-                  </div>
-                  
-                  {/* Help content */}
-                  {showHelp && (
-                    <div className="mb-3 p-2 bg-yellow-50 rounded-lg text-xs space-y-1">
-                      <p className="font-semibold text-yellow-900">📖 Suggested Order:</p>
-                      <ol className="space-y-1 text-yellow-800 ml-3">
-                        <li>1. <span className="font-medium">Reset All</span> - Clear everything to start fresh</li>
-                        <li>2. <span className="font-medium">Run Test</span> - See untrained AI struggle (30-40 steps)</li>
-                        <li>3. <span className="font-medium">Generate Data</span> - Create 10 training examples</li>
-                        <li>4. <span className="font-medium">Train Model</span> - Watch AI learn from examples</li>
-                        <li>5. <span className="font-medium">Run Test</span> - See trained AI succeed (8-10 steps)</li>
-                      </ol>
-                      <p className="text-yellow-700 mt-2 italic">
-                        💡 Compare performance before and after training to see the improvement!
-                      </p>
-                    </div>
-                  )}
-                  
-                  <div className="flex space-x-1">
-                    <button
-                      onClick={() => {
-                        resetModel();
-                        resetGame();
-                      }}
-                      className="flex-1 px-1 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
-                      title="Step 1: Clear everything"
-                    >
-                      1. Reset
-                    </button>
-                    <button
-                      onClick={() => {
-                        const episode = generateEpisode(false);
-                        runEpisode(episode);
-                      }}
-                      className="flex-1 px-1 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
-                      title="Step 2: Test untrained AI"
-                    >
-                      2. Pre
-                    </button>
-                    <button
-                      onClick={generateTrainingData}
-                      className="flex-1 px-1 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
-                      title="Step 3: Create training examples"
-                    >
-                      3. Data
-                    </button>
-                    <button
-                      onClick={() => {
-                        trainModel(5);
-                      }}
-                      className="flex-1 px-1 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
-                      title="Step 4: Train the model"
-                    >
-                      4. Train
-                    </button>
-                    <button
-                      onClick={() => {
-                        const episode = generateEpisode(true);
-                        runEpisode(episode);
-                      }}
-                      className="flex-1 px-1 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-                      title="Step 5: Test trained AI"
-                    >
-                      5. Post
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Main Content - Compact Layout */}
+      <CompactLayout
+        showTutorial={showTutorial}
+        currentTutorial={currentTutorial}
+        tutorialStep={tutorialStep}
+        totalSteps={tutorialSteps.length}
+        onTutorialPrevious={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
+        onTutorialSkip={() => setShowTutorial(false)}
+        showHelp={showHelp}
+        setShowHelp={setShowHelp}
+        trainModel={trainModel}
+      />
       
       {/* Footer */}
       <footer className="bg-gray-800 text-white px-4 py-1 text-xs flex-shrink-0">

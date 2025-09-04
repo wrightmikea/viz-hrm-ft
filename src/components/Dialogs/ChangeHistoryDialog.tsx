@@ -8,25 +8,27 @@ interface ChangeHistoryDialogProps {
 
 const changes = [
   {
-    version: '1.0.0',
-    date: '2025-01-04',
+    version: '0.1.0-beta',
+    date: '2024-12-04 (Today)',
     changes: [
-      'Initial release',
-      'Interactive 7-step tutorial',
-      'Animated training visualization',
-      'Live AI thought bubbles',
-      'Free exploration mode'
+      'Fixed training data display in free mode',
+      'Optimized layout for 100% zoom',
+      'Separated Pre/Post test buttons',
+      'Fixed training button behavior',
+      'Updated copyright to Michael A. Wright',
+      'Added tooltips for better UX'
     ]
   },
   {
-    version: '1.0.1',
-    date: '2025-01-04',
+    version: '0.1.0-alpha',
+    date: '2024-12-03 (Yesterday)',
     changes: [
-      'Fixed training data display persistence',
-      'Added help button with workflow instructions',
-      'Reorganized control buttons in logical order',
-      'Added References and About dialogs',
-      'Added mode indicators for better UX'
+      'Initial alpha release',
+      'Interactive 7-step tutorial',
+      'Animated training visualization',
+      'Live AI thought bubbles',
+      'Free exploration mode',
+      'Dialog system for info/references'
     ]
   }
 ];
