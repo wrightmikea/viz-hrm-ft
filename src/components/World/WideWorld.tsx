@@ -72,18 +72,26 @@ const WideWorld: React.FC = () => {
     <div className="bg-white rounded-lg shadow-md p-4">
       {/* World Grid */}
       <div className="flex space-x-1 mb-3">
-        {tiles.map((position) => (
-          <motion.div
-            key={position}
-            className={`relative flex-1 h-16 bg-gray-100 rounded border-2 flex items-center justify-center ${
-              currentState.agentPos === position ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
-            }`}
-            whileHover={{ scale: 1.05 }}
-          >
-            <span className="absolute top-0.5 left-1 text-xs text-gray-400">{position}</span>
-            {getTileContent(position)}
-          </motion.div>
-        ))}
+        {tiles.map((position) => {
+          const hasKey = currentState.keyPos === position && !currentState.hasKey;
+          const hasDoor = currentState.doorPos === position;
+          const hasAgent = currentState.agentPos === position;
+          const isEmpty = !hasKey && !hasDoor && !hasAgent;
+          
+          return (
+            <motion.div
+              key={position}
+              className={`relative flex-1 h-16 bg-gray-100 rounded border-2 flex items-center justify-center ${
+                currentState.agentPos === position ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              title={isEmpty ? `Empty space at position ${position} - The agent can move here` : undefined}
+            >
+              <span className="absolute top-0.5 left-1 text-xs text-gray-400">{position}</span>
+              {getTileContent(position)}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Status Bar */}
@@ -104,7 +112,8 @@ const WideWorld: React.FC = () => {
           )}
           
           {currentState.steps > 0 && optimalSteps > 0 && (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1" 
+                 title={`Efficiency: optimal steps (${optimalSteps}) / actual steps (${currentState.steps}) * 100. Values >100% mean the AI found a more optimal path than expected!`}>
               <span className="text-gray-600">Efficiency:</span>
               <span className={`font-mono font-bold ${
                 efficiency >= 80 ? 'text-green-600' : 
