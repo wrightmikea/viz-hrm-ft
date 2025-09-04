@@ -5,6 +5,9 @@ import WideWorld from './components/World/WideWorld';
 import LiveThoughts from './components/Hierarchy/LiveThoughts';
 import TrainingDataPanel from './components/Training/TrainingDataPanel';
 import AnimatedTraining from './components/Training/AnimatedTraining';
+import AboutDialog from './components/Dialogs/AboutDialog';
+import ReferencesDialog from './components/Dialogs/ReferencesDialog';
+import ChangeHistoryDialog from './components/Dialogs/ChangeHistoryDialog';
 import { useSimulationStore } from './store/gameStore';
 import './styles/globals.css';
 
@@ -26,6 +29,9 @@ function App() {
   const [showTutorial, setShowTutorial] = useState(true);
   const [showTrainingAnimation, setShowTrainingAnimation] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showAboutDialog, setShowAboutDialog] = useState(false);
+  const [showReferencesDialog, setShowReferencesDialog] = useState(false);
+  const [showChangeHistoryDialog, setShowChangeHistoryDialog] = useState(false);
 
   useEffect(() => {
     // Initialize game
@@ -131,6 +137,14 @@ function App() {
   ];
 
   const currentTutorial = tutorialSteps[tutorialStep];
+  
+  // Get mode label for header
+  const getModeLabel = () => {
+    if (!showTutorial) return '🎮 Free Exploration Mode';
+    if (tutorialStep === 0) return '📖 Introduction';
+    if (tutorialStep === tutorialSteps.length - 1) return '🎯 Final Step';
+    return `📚 Tutorial Step ${tutorialStep} of ${tutorialSteps.length - 1}`;
+  };
 
   // Special layout for training phase
   if (showTrainingAnimation && tutorialStep === 4) {
@@ -138,7 +152,26 @@ function App() {
       <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
         {/* Header */}
         <header className="bg-white shadow-sm px-4 py-2 flex-shrink-0">
-          <h1 className="text-lg font-bold">HRM Training Visualization</h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-lg font-bold">HRM Training Visualization</h1>
+              <p className="text-xs text-gray-600">{getModeLabel()}</p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowReferencesDialog(true)}
+                className="text-sm text-gray-600 hover:text-gray-800"
+              >
+                References
+              </button>
+              <button
+                onClick={() => setShowAboutDialog(true)}
+                className="text-sm text-gray-600 hover:text-gray-800"
+              >
+                About
+              </button>
+            </div>
+          </div>
         </header>
 
         {/* Tutorial Wizard */}
@@ -216,6 +249,35 @@ function App() {
             </div>
           </div>
         </div>
+        
+        {/* Footer */}
+        <footer className="bg-gray-800 text-white px-4 py-2 text-xs flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              © 2025 Mike Wright | MIT License
+            </div>
+            <button
+              onClick={() => setShowChangeHistoryDialog(true)}
+              className="text-gray-400 hover:text-white underline"
+            >
+              Change History
+            </button>
+          </div>
+        </footer>
+        
+        {/* Dialogs */}
+        <AboutDialog 
+          isOpen={showAboutDialog} 
+          onClose={() => setShowAboutDialog(false)} 
+        />
+        <ReferencesDialog 
+          isOpen={showReferencesDialog} 
+          onClose={() => setShowReferencesDialog(false)} 
+        />
+        <ChangeHistoryDialog
+          isOpen={showChangeHistoryDialog}
+          onClose={() => setShowChangeHistoryDialog(false)}
+        />
       </div>
     );
   }
@@ -226,18 +288,35 @@ function App() {
       {/* Header - Minimal */}
       <header className="bg-white shadow-sm px-4 py-2 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold">HRM Training Visualization</h1>
-          {!showTutorial && (
+          <div>
+            <h1 className="text-lg font-bold">HRM Training Visualization</h1>
+            <p className="text-xs text-gray-600">{getModeLabel()}</p>
+          </div>
+          <div className="flex items-center space-x-3">
             <button
-              onClick={() => {
-                setShowTutorial(true);
-                setTutorialStep(0);
-              }}
-              className="text-sm text-blue-600 hover:text-blue-800"
+              onClick={() => setShowReferencesDialog(true)}
+              className="text-sm text-gray-600 hover:text-gray-800"
             >
-              Restart Tutorial
+              References
             </button>
-          )}
+            <button
+              onClick={() => setShowAboutDialog(true)}
+              className="text-sm text-gray-600 hover:text-gray-800"
+            >
+              About
+            </button>
+            {!showTutorial && (
+              <button
+                onClick={() => {
+                  setShowTutorial(true);
+                  setTutorialStep(0);
+                }}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Restart Tutorial
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -391,6 +470,35 @@ function App() {
           </div>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white px-4 py-2 text-xs flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <div>
+            © 2025 Mike Wright | MIT License
+          </div>
+          <button
+            onClick={() => setShowChangeHistoryDialog(true)}
+            className="text-gray-400 hover:text-white underline"
+          >
+            Change History
+          </button>
+        </div>
+      </footer>
+      
+      {/* Dialogs */}
+      <AboutDialog 
+        isOpen={showAboutDialog} 
+        onClose={() => setShowAboutDialog(false)} 
+      />
+      <ReferencesDialog 
+        isOpen={showReferencesDialog} 
+        onClose={() => setShowReferencesDialog(false)} 
+      />
+      <ChangeHistoryDialog
+        isOpen={showChangeHistoryDialog}
+        onClose={() => setShowChangeHistoryDialog(false)}
+      />
     </div>
   );
 }
