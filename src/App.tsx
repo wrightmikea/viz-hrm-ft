@@ -25,6 +25,7 @@ function App() {
   const [tutorialStep, setTutorialStep] = useState(0);
   const [showTutorial, setShowTutorial] = useState(true);
   const [showTrainingAnimation, setShowTrainingAnimation] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     // Initialize game
@@ -318,45 +319,71 @@ function App() {
               {/* Controls */}
               {!showTutorial && (
                 <div className="bg-white rounded-lg shadow p-2">
-                  <h3 className="text-sm font-bold mb-2">Controls</h3>
-                  <div className="space-y-2">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => {
-                          resetModel();
-                          resetGame();
-                        }}
-                        className="flex-1 px-2 py-1 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
-                      >
-                        Reset All
-                      </button>
-                      <button
-                        onClick={() => {
-                          const episode = generateEpisode(modelAccuracy.planner > 50);
-                          runEpisode(episode);
-                        }}
-                        className="flex-1 px-2 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-                      >
-                        Run Test
-                      </button>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-bold">Controls</h3>
+                    <button
+                      onClick={() => setShowHelp(!showHelp)}
+                      className="px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      {showHelp ? 'Hide Help' : 'Help'}
+                    </button>
+                  </div>
+                  
+                  {/* Help content */}
+                  {showHelp && (
+                    <div className="mb-3 p-2 bg-yellow-50 rounded-lg text-xs space-y-1">
+                      <p className="font-semibold text-yellow-900">📖 Suggested Order:</p>
+                      <ol className="space-y-1 text-yellow-800 ml-3">
+                        <li>1. <span className="font-medium">Reset All</span> - Clear everything to start fresh</li>
+                        <li>2. <span className="font-medium">Run Test</span> - See untrained AI struggle (30-40 steps)</li>
+                        <li>3. <span className="font-medium">Generate Data</span> - Create 10 training examples</li>
+                        <li>4. <span className="font-medium">Train Model</span> - Watch AI learn from examples</li>
+                        <li>5. <span className="font-medium">Run Test</span> - See trained AI succeed (8-10 steps)</li>
+                      </ol>
+                      <p className="text-yellow-700 mt-2 italic">
+                        💡 Compare performance before and after training to see the improvement!
+                      </p>
                     </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={generateTrainingData}
-                        className="flex-1 px-2 py-1 bg-purple-500 text-white rounded text-sm hover:bg-purple-600"
-                      >
-                        Generate Data
-                      </button>
-                      <button
-                        onClick={() => {
-                          setShowTrainingAnimation(true);
-                          setPhase('training');
-                        }}
-                        className="flex-1 px-2 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600"
-                      >
-                        Train Model
-                      </button>
-                    </div>
+                  )}
+                  
+                  <div className="flex space-x-1">
+                    <button
+                      onClick={() => {
+                        resetModel();
+                        resetGame();
+                      }}
+                      className="flex-1 px-1 py-1 bg-gray-500 text-white rounded text-xs hover:bg-gray-600"
+                      title="Step 1: Clear everything"
+                    >
+                      1. Reset
+                    </button>
+                    <button
+                      onClick={() => {
+                        const episode = generateEpisode(modelAccuracy.planner > 50);
+                        runEpisode(episode);
+                      }}
+                      className="flex-1 px-1 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                      title="Step 2 & 5: Test the AI"
+                    >
+                      2/5. Test
+                    </button>
+                    <button
+                      onClick={generateTrainingData}
+                      className="flex-1 px-1 py-1 bg-purple-500 text-white rounded text-xs hover:bg-purple-600"
+                      title="Step 3: Create training examples"
+                    >
+                      3. Data
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowTrainingAnimation(true);
+                        setPhase('training');
+                      }}
+                      className="flex-1 px-1 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                      title="Step 4: Train the model"
+                    >
+                      4. Train
+                    </button>
                   </div>
                 </div>
               )}
