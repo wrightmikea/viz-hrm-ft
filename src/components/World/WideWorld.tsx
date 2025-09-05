@@ -112,13 +112,19 @@ const WideWorld: React.FC = () => {
           )}
           
           {currentState.steps > 0 && optimalSteps > 0 && (
-            <div className="flex items-center space-x-1" 
-                 title={`Efficiency: optimal steps (${optimalSteps}) / actual steps (${currentState.steps}) * 100. Values >100% mean the AI found a more optimal path than expected!`}>
-              <span className="text-gray-600">Efficiency:</span>
-              <span className={`font-mono font-bold ${
+            <div className="flex items-center space-x-1 group relative">
+              <span className="text-gray-600 cursor-help" 
+                    title={`Efficiency = (optimal steps ${optimalSteps} / actual steps ${currentState.steps}) × 100 = ${efficiency}%`}>
+                Efficiency:
+              </span>
+              <span className={`font-mono font-bold cursor-help ${
                 efficiency >= 80 ? 'text-green-600' : 
                 efficiency >= 50 ? 'text-yellow-600' : 'text-red-600'
-              }`}>
+              }`}
+                    title={efficiency > 100 ? 
+                      `${efficiency}% means the AI found a path shorter than the expected optimal path!` :
+                      `${efficiency}% efficiency (${100-efficiency}% longer than optimal)`
+                    }>
                 {efficiency}%
               </span>
             </div>

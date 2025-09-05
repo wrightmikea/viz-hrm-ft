@@ -43,6 +43,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
           } else {
             // Training complete
             setIsProcessing(false);
+            setLearnedConcepts([]); // Clear learned concepts when training completes
             if (onComplete) onComplete();
           }
         }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import BeginnerWizard, { TutorialStep } from './components/Tutorial/BeginnerWizard';
-import CompactLayout from './components/UI/CompactLayout';
+import { TutorialStep } from './components/Tutorial/BeginnerWizard';
+import UnifiedLayout from './components/UI/UnifiedLayout';
 import AnimatedTraining from './components/Training/AnimatedTraining';
 import AboutDialog from './components/Dialogs/AboutDialog';
 import ReferencesDialog from './components/Dialogs/ReferencesDialog';
@@ -18,17 +17,18 @@ function App() {
     resetGame,
     resetModel,
     setPhase,
-    modelAccuracy,
-    pause
+    pause,
+    clearThoughts,
+    trainingEpisodes
   } = useSimulationStore();
 
   const [tutorialStep, setTutorialStep] = useState(0);
   const [showTutorial, setShowTutorial] = useState(true);
   const [showTrainingAnimation, setShowTrainingAnimation] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
   const [showAboutDialog, setShowAboutDialog] = useState(false);
   const [showReferencesDialog, setShowReferencesDialog] = useState(false);
   const [showChangeHistoryDialog, setShowChangeHistoryDialog] = useState(false);
+  const [selectedExample, setSelectedExample] = useState<number | null>(null);
 
   useEffect(() => {
     // Initialize game
@@ -143,143 +143,81 @@ function App() {
     return `📚 Tutorial Step ${tutorialStep} of ${tutorialSteps.length - 1}`;
   };
 
-  // Special layout for training phase (only during tutorial step 4)
-  if (showTrainingAnimation && showTutorial && tutorialStep === 4) {
+  // Tutorial content for left panel
+  const getTutorialContent = () => {
+    if (!showTutorial) return null;
+    
     return (
-      <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm px-4 py-2 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-lg font-bold">HRM Training Visualization</h1>
-              <p className="text-xs text-gray-600">{getModeLabel()}</p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setShowReferencesDialog(true)}
-                className="text-sm text-gray-600 hover:text-gray-800"
-              >
-                References
-              </button>
-              <button
-                onClick={() => setShowAboutDialog(true)}
-                className="text-sm text-gray-600 hover:text-gray-800"
-              >
-                About
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Tutorial Wizard */}
-        <BeginnerWizard
-          step={currentTutorial}
-          totalSteps={tutorialSteps.length}
-          onPrevious={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
-          onSkip={() => setShowTutorial(false)}
-        />
-
-        {/* Training Layout - Horizontal */}
-        <div className="flex-1 p-2 overflow-hidden">
-          <div className="h-full grid grid-cols-2 gap-2">
-            {/* Left: Animated Training */}
-            <div className="overflow-auto">
-              <AnimatedTraining 
-                onComplete={async () => {
-                  await trainModel(5);
-                  setShowTrainingAnimation(false);
-                  setTutorialStep(5);
-                }}
-              />
-            </div>
-
-            {/* Right: Live Model Status */}
-            <div className="overflow-auto space-y-2">
-              {/* Model Status Card */}
-              <div className="bg-white rounded-lg shadow p-3">
-                <h3 className="text-sm font-bold mb-2">AI Model Learning</h3>
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs">🧠 Planner (decides goals):</span>
-                      <span className="text-xs font-mono">{Math.round(modelAccuracy.planner)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <motion.div
-                        className="bg-blue-500 h-2 rounded-full"
-                        animate={{ width: `${modelAccuracy.planner}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-600 mt-1">
-                      Learning: "Get key first, then go to door"
-                    </p>
-                  </div>
-
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs">🤖 Doer (executes actions):</span>
-                      <span className="text-xs font-mono">{Math.round(modelAccuracy.doer)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <motion.div
-                        className="bg-green-500 h-2 rounded-full"
-                        animate={{ width: `${modelAccuracy.doer}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-gray-600 mt-1">
-                      Learning: "How to navigate to targets"
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Key Insights */}
-              <div className="bg-yellow-50 rounded-lg p-3">
-                <h3 className="text-sm font-bold text-yellow-900 mb-2">🔍 What's Happening?</h3>
-                <div className="space-y-2 text-xs text-yellow-800">
-                  <p>• Each example shows the optimal solution path</p>
-                  <p>• The Planner learns the sequence: Key → Door</p>
-                  <p>• The Doer learns which actions achieve each goal</p>
-                  <p>• Speed increases as patterns become clear</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="h-full flex flex-col">
+        {/* Progress dots */}
+        <div className="flex justify-center space-x-1 mb-2">
+          {tutorialSteps.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2 h-2 rounded-full ${
+                idx === tutorialStep ? 'bg-blue-600' : 
+                idx < tutorialStep ? 'bg-blue-400' : 'bg-gray-300'
+              }`}
+            />
+          ))}
         </div>
         
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white px-4 py-2 text-xs flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              © 2025 Michael A. Wright | MIT License
-            </div>
-            <button
-              onClick={() => setShowChangeHistoryDialog(true)}
-              className="text-gray-400 hover:text-white underline"
-            >
-              Change History
-            </button>
-          </div>
-        </footer>
+        {/* Tutorial content */}
+        <div className="flex-1">
+          <h2 className="text-sm font-bold mb-1">{currentTutorial.title}</h2>
+          <p className="text-xs text-gray-700 mb-2">{currentTutorial.description}</p>
+          <p className="text-xs text-blue-600 font-medium">👉 {currentTutorial.instruction}</p>
+        </div>
         
-        {/* Dialogs */}
-        <AboutDialog 
-          isOpen={showAboutDialog} 
-          onClose={() => setShowAboutDialog(false)} 
-        />
-        <ReferencesDialog 
-          isOpen={showReferencesDialog} 
-          onClose={() => setShowReferencesDialog(false)} 
-        />
-        <ChangeHistoryDialog
-          isOpen={showChangeHistoryDialog}
-          onClose={() => setShowChangeHistoryDialog(false)}
+        {/* Tutorial buttons */}
+        <div className="flex space-x-2 mt-2">
+          {tutorialStep > 0 && (
+            <button
+              onClick={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
+              className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+            >
+              ← Back
+            </button>
+          )}
+          <button
+            onClick={currentTutorial.buttonAction}
+            className="flex-1 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            {currentTutorial.buttonText}
+          </button>
+          <button
+            onClick={() => setShowTutorial(false)}
+            className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Skip Tutorial
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Training animation content for training phase
+  const getTrainingContent = () => {
+    if (!showTrainingAnimation || tutorialStep !== 4) return null;
+    
+    return (
+      <div className="h-full">
+        <h3 className="text-xs font-bold mb-1">Model Learning</h3>
+        <AnimatedTraining 
+          onComplete={async () => {
+            await trainModel(5);
+            setShowTrainingAnimation(false);
+            setSelectedExample(null);  // Clear selected example
+            clearThoughts();  // Clear AI thinking
+            setPhase('afterTraining');  // Change phase to stop showing "Learning from examples"
+            setTutorialStep(5);
+          }}
         />
       </div>
     );
-  }
+  };
 
-  // Normal layout for other phases
+  // Unified layout for all screens
   return (
     <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
       {/* Header - Compact */}
@@ -317,17 +255,15 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content - Compact Layout */}
-      <CompactLayout
-        showTutorial={showTutorial}
-        currentTutorial={currentTutorial}
-        tutorialStep={tutorialStep}
-        totalSteps={tutorialSteps.length}
-        onTutorialPrevious={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
-        onTutorialSkip={() => setShowTutorial(false)}
-        showHelp={showHelp}
-        setShowHelp={setShowHelp}
+      {/* Main Content - Unified Layout */}
+      <UnifiedLayout
+        leftPanelContent={getTutorialContent()}
+        rightThirdColumnContent={getTrainingContent()}
+        showTrainingData={(tutorialStep === 3 || tutorialStep === 4) && showTutorial ? true : (!showTutorial && trainingEpisodes.length > 0)}
+        isFreePlay={!showTutorial}
         trainModel={trainModel}
+        selectedExample={selectedExample}
+        setSelectedExample={setSelectedExample}
       />
       
       {/* Footer */}

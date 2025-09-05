@@ -181,6 +181,7 @@ export const useSimulationStore = create<SimulationState & SimulationActions>((s
     set({ 
       trainingProgress: 0,
       thoughts: [],
+      trainingEpisodes: [],  // Clear training examples
       modelAccuracy: { planner: 30, doer: 40 },
       resetFeedback: '✅ Model reset!',
       episodeStep: 0
