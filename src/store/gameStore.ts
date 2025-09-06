@@ -83,6 +83,7 @@ export interface SimulationActions {
   // Utilities
   clearThoughts: () => void;
   addThought: (thought: Thought) => void;
+  clearTrainingEpisodes: () => void;
 }
 
 export const useSimulationStore = create<SimulationState & SimulationActions>((set, get) => ({
@@ -389,5 +390,9 @@ export const useSimulationStore = create<SimulationState & SimulationActions>((s
   
   addThought: (thought) => {
     set(state => ({ thoughts: [...state.thoughts, thought] }));
+  },
+  
+  clearTrainingEpisodes: () => {
+    set({ trainingEpisodes: [] });
   }
 }));

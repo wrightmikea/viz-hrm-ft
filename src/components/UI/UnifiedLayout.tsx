@@ -46,11 +46,18 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
     currentState,
     trainingEpisodes,
     pause,
-    setPhase
+    setPhase,
+    clearTrainingEpisodes
   } = useSimulationStore();
 
   const [showHelp, setShowHelp] = React.useState(false);
   const [showTrainingAnimation, setShowTrainingAnimation] = React.useState(false);
+  
+  // Button enable states for free play
+  const [hasReset, setHasReset] = React.useState(false);
+  const [hasGenerated, setHasGenerated] = React.useState(false);
+  const [hasTrained, setHasTrained] = React.useState(false);
+  const [isTraining, setIsTraining] = React.useState(false);
   
   // Use prop values if provided, otherwise maintain local state (for free play)
   const [localSelectedExample, setLocalSelectedExample] = React.useState<number | null>(null);
@@ -61,10 +68,10 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
   const freePlayLeftContent = isFreePlay && trainModel ? (
     <div className="h-full flex flex-col overflow-auto">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-sm font-bold">Controls</h3>
+        <h3 className="text-base font-bold">Controls</h3>
         <button
           onClick={() => setShowHelp(!showHelp)}
-          className="px-1 py-0.5 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
+          className="px-1 py-0.5 text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600"
           title="Show/hide workflow help"
         >
           {showHelp ? 'Hide' : 'Help'}
@@ -72,7 +79,7 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
       </div>
       
       {showHelp && (
-        <div className="mb-2 p-2 bg-yellow-50 rounded text-xs space-y-1">
+        <div className="mb-2 p-2 bg-yellow-50 rounded text-sm space-y-1">
           <p className="font-semibold text-yellow-900">Recommended Workflow:</p>
           <ol className="space-y-1 text-yellow-800 ml-2">
             <li>1. Reset to clear everything</li>
@@ -84,62 +91,101 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
         </div>
       )}
       
-      <div className="flex flex-col gap-2">
-        <button
-          onClick={() => { 
-            pause();  // Stop any running episode
-            resetModel(); 
-            resetGame();
-            setSelectedExample(null);
-          }}
-          className="px-3 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600 text-left"
-          title="Clear everything and start over. Resets both the AI model (untrained state) and the game."
-        >
-          1. Reset All
-        </button>
-        <button
-          onClick={() => {
-            pause();  // Stop any running episode
-            resetGame();
-            runEpisode(generateEpisode(false));
-          }}
-          className="px-3 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600 text-left"
-          title="Test the UNTRAINED AI. It will perform randomly and poorly (30-40 steps or fail)."
-        >
-          2. Pre-Training Test
-        </button>
-        <button
-          onClick={() => {
-            pause();  // Stop any running episode
-            generateTrainingData();
-          }}
-          className="px-3 py-2 bg-purple-500 text-white rounded text-sm hover:bg-purple-600 text-left"
-          title="Generate 10 optimal training examples with different starting positions to teach the AI."
-        >
-          3. Generate Training Data
-        </button>
-        <button
-          onClick={() => {
-            pause();  // Stop any running episode
-            setShowTrainingAnimation(true);
-          }}
-          className="px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600 text-left"
-          title="Train the AI on the examples. The model will study each example and learn the patterns."
-        >
-          4. Train Model (5 epochs)
-        </button>
-        <button
-          onClick={() => {
-            pause();  // Stop any running episode
-            setSelectedExample(null);  // Clear selected example
-            resetGame();
-            runEpisode(generateEpisode(true));
-          }}
-          className="px-3 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 text-left"
-          title="Test the TRAINED AI. It should now solve efficiently (8-10 steps)."
-        >
-          5. Post-Training Test
-        </button>
+      <div className="grid grid-cols-3 gap-2">
+        {/* Column 1 */}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => { 
+              pause();  // Stop any running episode
+              resetModel(); 
+              resetGame();
+              setSelectedExample(null);
+              setHasReset(true);
+              setHasGenerated(false);
+              setHasTrained(false);
+              setIsTraining(false);
+            }}
+            className="px-2 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
+            title="Clear everything and start over. Resets both the AI model (untrained state) and the game."
+          >
+            Reset All
+          </button>
+          <button
+            onClick={() => {
+              pause();  // Stop any running episode
+              resetGame();
+              runEpisode(generateEpisode(false));
+            }}
+            disabled={!hasReset || isTraining || hasTrained}
+            className={`px-2 py-2 rounded text-sm ${
+              hasReset && !isTraining && !hasTrained
+                ? 'bg-red-500 text-white hover:bg-red-600' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            title="Test the UNTRAINED AI. It will perform randomly and poorly (30-40 steps or fail)."
+          >
+            Test Untrained
+          </button>
+        </div>
+
+        {/* Column 2 */}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => {
+              pause();  // Stop any running episode
+              generateTrainingData();
+              setHasGenerated(true);
+            }}
+            disabled={!hasReset || hasGenerated}
+            className={`px-2 py-2 rounded text-sm ${
+              hasReset && !hasGenerated
+                ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            title="Generate 10 optimal training examples with different starting positions to teach the AI."
+          >
+            Generate Data
+          </button>
+          <button
+            onClick={() => {
+              pause();  // Stop any running episode
+              setShowTrainingAnimation(true);
+              setIsTraining(true);  // Disable Test Untrained immediately
+            }}
+            disabled={!hasGenerated || hasTrained}
+            className={`px-2 py-2 rounded text-sm ${
+              hasGenerated && !hasTrained
+                ? 'bg-green-500 text-white hover:bg-green-600' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            title="Train the AI on the examples. The model will study each example and learn the patterns."
+          >
+            Train Model
+          </button>
+        </div>
+
+        {/* Column 3 */}
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => {
+              pause();  // Stop any running episode
+              setSelectedExample(null);  // Clear selected example
+              resetGame();
+              runEpisode(generateEpisode(true));
+            }}
+            disabled={!hasTrained}
+            className={`px-2 py-2 rounded text-sm ${
+              hasTrained 
+                ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            title="Test the TRAINED AI. It should now solve efficiently (8-10 steps)."
+          >
+            Test Trained
+          </button>
+          {/* Empty space below */}
+          <div className="h-10"></div>
+        </div>
       </div>
     </div>
   ) : null;
@@ -152,7 +198,7 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
           {/* Left: Current View Description/Instructions or Controls in Free Play */}
           <div className="bg-white rounded shadow p-2 overflow-auto">
             {leftPanelContent || freePlayLeftContent || (
-              <div className="text-center text-gray-400 text-sm">
+              <div className="text-center text-gray-400 text-base">
                 Tutorial content will appear here
               </div>
             )}
@@ -171,8 +217,8 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
         }}>
           {/* Column 1: Model Info */}
           <div className="bg-white rounded shadow p-1 overflow-auto" style={{ minHeight: 0 }}>
-            <h3 className="text-xs font-bold mb-1" title="Current state of the AI model components">Model Info</h3>
-            <div className="space-y-1 text-xs">
+            <h3 className="text-sm font-bold mb-1" title="Current state of the AI model components">Model Info</h3>
+            <div className="space-y-1 text-sm">
               <div>
                 <div className="flex justify-between items-center">
                   <span className="cursor-help" title="Planner: The high-level decision maker that learns 'Get key BEFORE door'">🧠 Planner:</span>
@@ -212,7 +258,7 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
               <div title="Agent's memory state - tracks if key has been picked up">
                 <div className="flex justify-between">
                   <span>💾 Memory:</span>
-                  <span className="font-mono text-xs">
+                  <span className="font-mono text-sm">
                     {currentState.hasKey ? 'has_key ✓' : 'no_key ✗'}
                   </span>
                 </div>
@@ -225,16 +271,16 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
             {selectedExample !== null && trainingEpisodes[selectedExample] ? (
               <div className="h-full flex flex-col">
                 <div className="flex justify-between items-center mb-1">
-                  <h3 className="text-xs font-bold">Example #{selectedExample + 1} Details</h3>
+                  <h3 className="text-sm font-bold">Example #{selectedExample + 1} Details</h3>
                   <button 
                     onClick={() => setSelectedExample(null)}
-                    className="text-xs text-gray-500 hover:text-gray-700"
+                    className="text-sm text-gray-500 hover:text-gray-700"
                     title="Close example details"
                   >
                     ✕
                   </button>
                 </div>
-                <div className="text-xs space-y-2 flex-1 overflow-auto">
+                <div className="text-sm space-y-2 flex-1 overflow-auto">
                   <div className="p-1 bg-blue-50 rounded cursor-help" 
                        title="Initial State: The starting positions for this training example. The PLANNER learns from seeing that despite different positions, the solution always follows the same pattern.">
                     <span className="font-semibold cursor-help" 
@@ -278,28 +324,31 @@ const UnifiedLayout: React.FC<UnifiedLayoutProps> = ({
             {rightThirdColumnContent || (
               showTrainingAnimation && isFreePlay ? (
                 <div className="h-full">
-                  <h3 className="text-xs font-bold mb-1">Model Learning</h3>
+                  <h3 className="text-sm font-bold mb-1">Model Learning</h3>
                   <AnimatedTraining 
                     onComplete={async () => {
                       if (trainModel) await trainModel(5);
                       setShowTrainingAnimation(false);
                       setSelectedExample(null);
                       setPhase('afterTraining');  // Clear "Learning from examples" message
+                      clearTrainingEpisodes();  // Clear training examples after training completes
+                      setHasTrained(true);  // Enable Test Trained button
+                      setIsTraining(false);  // Training is complete
                     }}
                   />
                 </div>
               ) : (
                 <>
-                  <h3 className="text-xs font-bold mb-1">AI "Thinking"</h3>
+                  <h3 className="text-sm font-bold mb-1">AI "Thinking"</h3>
                   <LiveThoughts />
                 </>
               )
             )}
           </div>
           
-          {/* Bottom Row: Training Examples - Only under first 2 columns */}
+          {/* Bottom Row: Training Examples - Full width across all 3 columns */}
           {showTrainingData && trainingEpisodes.length > 0 && (
-            <div className="col-span-2" style={{ height: '120px' }}>
+            <div className="col-span-3" style={{ height: '120px' }}>
               <TrainingDataPanel onExampleClick={setSelectedExample} />
             </div>
           )}

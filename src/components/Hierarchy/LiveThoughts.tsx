@@ -73,16 +73,16 @@ const LiveThoughts: React.FC = () => {
             exit={{ opacity: 0, x: -20 }}
             className="flex items-start space-x-2"
           >
-            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm" title="Planner - High-level decision maker that sets goals">
+            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-base" title="Planner - High-level decision maker that sets goals">
               🧠
             </div>
             <div className="bg-blue-100 rounded-lg px-3 py-2 relative">
               <div className="absolute left-0 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-blue-100 -ml-2" />
-              <p className="text-sm font-medium text-blue-900">
+              <p className="text-base font-medium text-blue-900">
                 Planner: {plannerThought}
               </p>
               {lastSubGoal && (
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="text-sm text-blue-700 mt-1">
                   Decision: {lastSubGoal}
                 </p>
               )}
@@ -100,16 +100,16 @@ const LiveThoughts: React.FC = () => {
             exit={{ opacity: 0, x: -20 }}
             className="flex items-start space-x-2"
           >
-            <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm" title="Doer - Low-level executor that performs actions">
+            <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-base" title="Doer - Low-level executor that performs actions">
               🤖
             </div>
             <div className="bg-green-100 rounded-lg px-3 py-2 relative">
               <div className="absolute left-0 top-2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-green-100 -ml-2" />
-              <p className="text-sm font-medium text-green-900">
+              <p className="text-base font-medium text-green-900">
                 Doer: {doerThought}
               </p>
               {lastAction && (
-                <p className="text-xs text-green-700 mt-1">
+                <p className="text-sm text-green-700 mt-1">
                   Action: {lastAction}
                 </p>
               )}
@@ -126,7 +126,7 @@ const LiveThoughts: React.FC = () => {
           className="bg-purple-100 rounded-lg p-2 text-center"
           title="AI is learning from the training examples"
         >
-          <p className="text-xs font-medium text-purple-900">
+          <p className="text-sm font-medium text-purple-900">
             📚 Learning from examples: "Key first, then door!"
           </p>
         </motion.div>

@@ -164,9 +164,9 @@ function App() {
         
         {/* Tutorial content */}
         <div className="flex-1">
-          <h2 className="text-sm font-bold mb-1">{currentTutorial.title}</h2>
-          <p className="text-xs text-gray-700 mb-2">{currentTutorial.description}</p>
-          <p className="text-xs text-blue-600 font-medium">👉 {currentTutorial.instruction}</p>
+          <h2 className="text-base font-bold mb-1">{currentTutorial.title}</h2>
+          <p className="text-sm text-gray-700 mb-2">{currentTutorial.description}</p>
+          <p className="text-sm text-blue-600 font-medium">👉 {currentTutorial.instruction}</p>
         </div>
         
         {/* Tutorial buttons */}
@@ -174,20 +174,20 @@ function App() {
           {tutorialStep > 0 && (
             <button
               onClick={() => setTutorialStep(Math.max(0, tutorialStep - 1))}
-              className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+              className="px-2 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
             >
               ← Back
             </button>
           )}
           <button
             onClick={currentTutorial.buttonAction}
-            className="flex-1 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="flex-1 px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             {currentTutorial.buttonText}
           </button>
           <button
             onClick={() => setShowTutorial(false)}
-            className="px-2 py-1 text-xs bg-gray-200 rounded hover:bg-gray-300"
+            className="px-2 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
           >
             Skip Tutorial
           </button>
@@ -202,7 +202,7 @@ function App() {
     
     return (
       <div className="h-full">
-        <h3 className="text-xs font-bold mb-1">Model Learning</h3>
+        <h3 className="text-sm font-bold mb-1">Model Learning</h3>
         <AnimatedTraining 
           onComplete={async () => {
             await trainModel(5);
@@ -225,18 +225,18 @@ function App() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <h1 className="text-base font-bold">HRM Training Visualization</h1>
-            <span className="text-xs text-gray-600">{getModeLabel()}</span>
+            <span className="text-sm text-gray-600">{getModeLabel()}</span>
           </div>
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setShowReferencesDialog(true)}
-              className="text-sm text-gray-600 hover:text-gray-800"
+              className="text-base text-gray-600 hover:text-gray-800"
             >
               References
             </button>
             <button
               onClick={() => setShowAboutDialog(true)}
-              className="text-sm text-gray-600 hover:text-gray-800"
+              className="text-base text-gray-600 hover:text-gray-800"
             >
               About
             </button>
@@ -246,7 +246,7 @@ function App() {
                   setShowTutorial(true);
                   setTutorialStep(0);
                 }}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-base text-blue-600 hover:text-blue-800"
               >
                 Restart Tutorial
               </button>
@@ -267,7 +267,7 @@ function App() {
       />
       
       {/* Footer */}
-      <footer className="bg-gray-800 text-white px-4 py-1 text-xs flex-shrink-0">
+      <footer className="bg-gray-800 text-white px-4 py-1 text-sm flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
             © 2025 Michael A. Wright | MIT License

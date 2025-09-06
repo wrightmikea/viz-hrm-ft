@@ -1,20 +1,24 @@
 # Change History
 
-## [0.1.0-beta] - 2024-12-04
+## [0.1.0] - 2025-09-05
+
+### Release
+- UI tweaks - fix free play button enablement
+
+## [0.1.0-beta] - 2025-09-04
 
 ### Fixed
 - Training data panel now displays correctly in free exploration mode
 - Layout optimized to fit at 100% zoom
 - Control buttons separated (Pre/Post instead of combined Test)
 - Training button no longer jumps to tutorial
-- Copyright updated to "Michael A. Wright"
 
 ### Changed
 - Reduced header and footer height for more content space
 - Tighter spacing throughout UI
 - Header shows mode indicator inline with title
 
-## [0.1.0-alpha] - 2024-12-04
+## [0.1.0-alpha] - 2024-09-03
 
 ### Added
 - Interactive 7-step tutorial for learning about HRM

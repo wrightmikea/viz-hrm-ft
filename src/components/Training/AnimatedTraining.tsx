@@ -64,8 +64,8 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
   if (!isProcessing && currentExample === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-3">
-        <h3 className="text-sm font-bold mb-2">Ready to Train</h3>
-        <p className="text-xs text-gray-600 mb-3">
+        <h3 className="text-base font-bold mb-2">Ready to Train</h3>
+        <p className="text-sm text-gray-600 mb-3">
           The AI will study {trainingEpisodes.length} examples, starting slowly then speeding up.
         </p>
         <motion.button
@@ -89,8 +89,8 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
     <div className="bg-white rounded-lg shadow p-3 space-y-3">
       {/* Training Header */}
       <div>
-        <h3 className="text-sm font-bold">Training in Progress</h3>
-        <div className="flex items-center justify-between text-xs text-gray-600 mt-1">
+        <h3 className="text-base font-bold">Training in Progress</h3>
+        <div className="flex items-center justify-between text-sm text-gray-600 mt-1">
           <span>Processing Example {currentExample + 1}/{Math.min(10, trainingEpisodes.length)}</span>
           <span>Speed: {currentExample === 0 ? '1x' : `${currentExample + 1}x`}</span>
         </div>
@@ -99,13 +99,13 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
       {/* Current Example Visualization */}
       <div className="bg-gray-50 rounded p-2">
         <div className="flex items-center space-x-1 mb-2">
-          <span className="text-xs font-medium">Path:</span>
+          <span className="text-sm font-medium">Path:</span>
           {/* Show mini world with current position */}
           <div className="flex space-x-0.5">
             {Array.from({ length: 10 }, (_, i) => (
               <div
                 key={i}
-                className={`w-6 h-6 rounded text-xs flex items-center justify-center ${
+                className={`w-6 h-6 rounded text-sm flex items-center justify-center ${
                   i === episode.states[currentStep]?.agentPos ? 'bg-blue-500' :
                   i === episode.states[0].keyPos ? 'bg-yellow-200' :
                   i === episode.states[0].doorPos ? 'bg-green-200' :
@@ -122,7 +122,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
 
         {/* Action sequence */}
         <div className="flex items-center space-x-1">
-          <span className="text-xs font-medium">Actions:</span>
+          <span className="text-sm font-medium">Actions:</span>
           <div className="flex space-x-0.5">
             {episode.actions.map((action, i) => (
               <motion.span
@@ -132,7 +132,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
                   opacity: i <= currentStep ? 1 : 0.3,
                   scale: i === currentStep ? 1.2 : 1
                 }}
-                className="text-xs"
+                className="text-sm"
               >
                 {action === 'Left' ? '←' : 
                  action === 'Right' ? '→' : 
@@ -145,7 +145,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
 
       {/* Learning Visualization */}
       <div className="space-y-2">
-        <div className="text-xs font-medium">AI is learning:</div>
+        <div className="text-sm font-medium">AI is learning:</div>
         
         {/* Planner Learning */}
         <motion.div 
@@ -156,7 +156,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
           }}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs">🧠 Planner:</span>
+            <span className="text-sm">🧠 Planner:</span>
             <div className="flex items-center space-x-1">
               <div className="w-20 bg-blue-200 rounded-full h-1.5">
                 <motion.div
@@ -164,10 +164,10 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
                   animate={{ width: `${30 + progress * 0.65}%` }}
                 />
               </div>
-              <span className="text-xs font-mono">{Math.round(30 + progress * 0.65)}%</span>
+              <span className="text-sm font-mono">{Math.round(30 + progress * 0.65)}%</span>
             </div>
           </div>
-          <p className="text-xs text-blue-700 mt-1">
+          <p className="text-sm text-blue-700 mt-1">
             {episode.states[currentStep]?.hasKey ? "Go to door after getting key" : "Get key first"}
           </p>
         </motion.div>
@@ -181,7 +181,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
           }}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs">🤖 Doer:</span>
+            <span className="text-sm">🤖 Doer:</span>
             <div className="flex items-center space-x-1">
               <div className="w-20 bg-green-200 rounded-full h-1.5">
                 <motion.div
@@ -189,10 +189,10 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
                   animate={{ width: `${40 + progress * 0.55}%` }}
                 />
               </div>
-              <span className="text-xs font-mono">{Math.round(40 + progress * 0.55)}%</span>
+              <span className="text-sm font-mono">{Math.round(40 + progress * 0.55)}%</span>
             </div>
           </div>
-          <p className="text-xs text-green-700 mt-1">
+          <p className="text-sm text-green-700 mt-1">
             Action {currentStep + 1}: {episode.actions[currentStep]} 
             {episode.actions[currentStep] === 'Pick' && " (at key position)"}
             {episode.actions[currentStep] === 'Open' && " (at door with key)"}
@@ -208,13 +208,13 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
             animate={{ opacity: 1, height: 'auto' }}
             className="bg-purple-50 rounded p-2"
           >
-            <div className="text-xs font-medium text-purple-900 mb-1">💡 Concepts Learned:</div>
+            <div className="text-sm font-medium text-purple-900 mb-1">💡 Concepts Learned:</div>
             {learnedConcepts.map((concept, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="text-xs text-purple-700"
+                className="text-sm text-purple-700"
               >
                 ✓ {concept}
               </motion.div>
@@ -225,7 +225,7 @@ const AnimatedTraining: React.FC<AnimatedTrainingProps> = ({ onComplete }) => {
 
       {/* Overall Progress */}
       <div>
-        <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+        <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
           <span>Overall Progress</span>
           <span>{Math.round(progress)}%</span>
         </div>

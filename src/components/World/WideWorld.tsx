@@ -87,7 +87,7 @@ const WideWorld: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               title={isEmpty ? `Empty space at position ${position} - The agent can move here` : undefined}
             >
-              <span className="absolute top-0.5 left-1 text-xs text-gray-400">{position}</span>
+              <span className="absolute top-0.5 left-1 text-sm text-gray-400">{position}</span>
               {getTileContent(position)}
             </motion.div>
           );
@@ -95,7 +95,7 @@ const WideWorld: React.FC = () => {
       </div>
 
       {/* Status Bar */}
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between text-base">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1">
             <span className="text-gray-600">Steps:</span>
@@ -151,7 +151,7 @@ const WideWorld: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className={`mt-2 px-3 py-1 rounded text-sm text-center ${
+            className={`mt-2 px-3 py-1 rounded text-base text-center ${
               currentState.isComplete ? 'bg-green-100 text-green-800' :
               currentState.isFailed ? 'bg-red-100 text-red-800' :
               'bg-blue-100 text-blue-800'
